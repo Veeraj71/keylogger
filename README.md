@@ -1,71 +1,69 @@
-# Keylogger
+# Keylogger with Dropbox Integration
 
-## Overview
+This project is a Python-based keylogger that records keystrokes, encrypts them, and uploads the encrypted logs to Dropbox. It uses the following libraries:
 
-This is a simple Python-based keylogger that records all keystrokes entered on the victim's machine. The captured keystrokes are stored in an encrypted format in a file named `input.py`. The decryption functionality is provided in `decrypt.py`. The project also includes plans to upload the encrypted file to Dropbox (feature under development).
+- `pynput` for capturing keyboard input.
+- `cryptography` for encryption using the `Fernet` symmetric encryption method.
+- `dropbox` for uploading files to a Dropbox account.
 
 ## Features
-
-- Records all keystrokes while the script is running.
-- Stops recording when the `ESC` key is pressed.
-- Saves keystrokes in an encrypted format to ensure data confidentiality.
-- Provides a decryption script to retrieve the recorded keystrokes.
-- Upcoming: Automatic upload of encrypted data to Dropbox.
+- Logs all keyboard input into a file (`input.txt`) in encrypted form.
+- Generates an encryption key (`key.txt`) to decrypt the logged data.
+- Automatically uploads the log file and encryption key to Dropbox when the `Esc` key is pressed.
 
 ## Prerequisites
-
-- Python 3.x
-- Required libraries (install via `pip`):
-  - `pynput`
-  - `cryptography`
-  - `dropbox` (for the upcoming feature)
+- Python 3.6 or higher
+- Dropbox account
+- Dropbox API Access Token
 
 ## Installation
 
-1. Clone the repository:
+1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/keylogger.git
-   cd keylogger
+   git clone https://github.com/yourusername/keylogger-with-dropbox.git
+   cd keylogger-with-dropbox
    ```
-2. Install the required Python libraries:
+
+2. **Install Dependencies**
    ```bash
-   pip install -r requirements.txt
+   pip install pynput cryptography dropbox
    ```
+
+3. **Set Your Dropbox Access Token**
+   Replace `ACCESS_TOKEN` in the script with your Dropbox API access token. You can generate one from the [Dropbox App Console](https://www.dropbox.com/developers/apps).
 
 ## Usage
 
-1. Run the keylogger script:
+1. **Run the Script**
    ```bash
    python keylogger.py
    ```
-2. The script will record all keystrokes until the `ESC` key is pressed.
-3. The recorded keystrokes will be saved in encrypted form in `input.py`.
 
-## Decrypting the Keystrokes
+2. **Press Keys**
+   - The script will log all keys pressed and encrypt them.
+   - Special keys like `Enter` and `Space` are handled appropriately.
 
-1. Use the `decrypt.py` script to decrypt the keystrokes:
-   ```bash
-   python decrypt.py
-   ```
-2. Follow the prompts to provide the encryption key and retrieve the recorded keystrokes in plain text.
+3. **Stop Logging**
+   - Press the `Esc` key to stop the keylogger.
+   - The script will upload the following files to Dropbox:
+     - `input.txt` (the encrypted log file)
+     - `key.txt` (the encryption key file)
+
+## File Details
+- **`input.txt`**: Contains encrypted logs of keyboard input.
+- **`key.txt`**: Contains the encryption key required to decrypt `input.txt`.
+
+## Security
+- Logs are encrypted using `cryptography.fernet` to ensure data security.
+- Do not share the `key.txt` file with unauthorized individuals, as it can be used to decrypt the logged data.
 
 ## Notes
+- Ensure you have a stable internet connection for Dropbox uploads.
+- Test the script in a controlled environment, as keylogging can be considered malicious behavior if used unethically.
 
-- Ensure that this tool is used responsibly and only with proper authorization. Unauthorized use is illegal and unethical.
-- Keep the encryption key secure to prevent unauthorized decryption of the recorded keystrokes.
-
-## To-Do
-
-- Implement automatic upload of the encrypted file to Dropbox.
-- Add more encryption options for enhanced security.
+## License
+This project is licensed under the MIT License. See `LICENSE` for more details.
 
 ## Disclaimer
-
-This project is for educational purposes only. The developers are not responsible for any misuse of this tool.
-
----
-
-### Contribution
-
-Feel free to fork the repository and submit pull requests to enhance functionality or fix issues..
+This tool is for educational purposes only. Unauthorized use of this script to log other individuals' activities without their consent is illegal and unethical. Use responsibly.
 
